@@ -1,0 +1,18 @@
+todo <command> [arguments]
+
+	<list(l)>
+		Lists all the tasks in the current scope
+
+	<pipe(p)>
+		Used to pipe(doesn't have the -l fuzz) [Ex: todo . -p | fzf]
+
+	<add(a)> [\"task\"]
+		If you remember you need to watch the greatest piece of ficton 'Attack on Titan', use this!
+
+	<done(d)> [taskID]
+		If you are done with watching the greatest piece of fiction (are you?), use this!
+
+	<clear(c)>
+		Clears all the tasks in the todo (to be used carefully, no backups are created!)
+
+The short commands (given in brackets) must be prefixed with '-'

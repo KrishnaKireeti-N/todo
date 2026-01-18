@@ -10,7 +10,13 @@
 #define ANSI_COLOR_WHITE    "\x1b[37m"
 
 // Bold Colors
-#define ANSI_COLOR_RED_BOLD      "\x1b[1;91m"
+#define ANSI_COLOR_RED_BOLD      "\x1b[1;31m"
+#define ANSI_COLOR_GREEN_BOLD    "\x1b[1;32m"
+#define ANSI_COLOR_YELLOW_BOLD   "\x1b[1;33m"
+#define ANSI_COLOR_BLUE_BOLD     "\x1b[1;34m"
+#define ANSI_COLOR_PURPLE_BOLD   "\x1b[1;35m"
+#define ANSI_COLOR_CYAN_BOLD     "\x1b[1;36m"
+#define ANSI_COLOR_WHITE_BOLD    "\x1b[1;37m"
 
 // Underline
 #define ANSI_COLOR_RED_UL      "\x1b[4;31m"
@@ -23,4 +29,11 @@
 
 
 // Background
-#define ANSI_COLOR_RED_BG "\x1b[41m"
+#define ANSI_COLOR_RED_BG      "\x1b[41m"
+#define ANSI_COLOR_GREEN_BG    "\x1b[42m"
+#define ANSI_COLOR_YELLOW_BG   "\x1b[43m"
+#define ANSI_COLOR_BLUE_BG     "\x1b[44m"
+#define ANSI_COLOR_PURPLE_BG   "\x1b[45m"
+#define ANSI_COLOR_CYAN_BG     "\x1b[46m"
+#define ANSI_COLOR_WHITE_BG    "\x1b[47m"
+

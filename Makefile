@@ -1,20 +1,23 @@
 src := $(wildcard src/*.c)
 output := bin/todo
 
-all: debug clean run
+all: bin debug clean run
 
+# To make todo 'commandable' follow these commands (make sure pwd is the repo's dir)
+# make release
+# ln -s $(pwd)/bin/todo ~/.local/bin/todo
 bin:
 	@mkdir -p bin
 
 # ------------------------------------------------------------------
-compileflags := -std=c2x -Iinclude ${src} -o ${output}
+compileflags := -g -std=c2x -Iinclude ${src} -o ${output}
 
 debugflags := -O0 -Wall -Wshadow -Werror
-debug: bin
-	@${CC} ${compileflags} ${debugflags}
+debug:
+	@$(CC) ${compileflags} ${debugflags}
 
 releaseflags = -O2
-release: bin
+release:
 	@$(CC) ${compileflags} ${releaseflags}
 #-------------------------------------------------------------------
 

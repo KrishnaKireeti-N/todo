@@ -1,69 +1,68 @@
-#include "ansi_color.h"
-#include "data.h"
+#include "utilities.h"
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
-char *todofp = "todo.csv";
-int main(int argc, char *argv[]) {
-
+int main(int argc, const char *argv[]) {
     if (argc < 2) {
-        printf("%s <command> [arguments]\n", argv[0]);
-        printf("\t<list(l)>\t[-]\n\t<add(a)>\t[task]\n\t<done(d)>\t[taskID]\n\t<clear(c)>\n");
+        FILE *help = fopen("config/help.txt", "r");
+
+        int n;
+        char buffer[64 * 1024];
+        while ((n = fread(buffer, 1, sizeof(buffer), help))) {
+            fwrite(buffer, 1, n, stdout);
+        }
 
         return 0;
     }
-    if (!strcmp(argv[1], "list") || !strcmp(argv[1], "l")) {
+
+    --argc;
+    argv++;
+
+    char todofp[128];
+    if (strcmp(argv[0], ".")) {
+        set_filepath(todofp, "todo.csv");
+    } else {
+        char buf[64 + 8];
+        sprintf(buf, "todo%lu.csv", hash_str64(getcwd(buf, 32)));
+        set_filepath(todofp, buf);
+
+        --argc;
+        argv++;
+        if (!argc) {
+            printf("No need of any 'init' just start doing your work!\n");
+            return 0;
+        }
+    }
+    // printf("%s\n", todofp);
+
+    if (!strcmp(argv[0], "list") || !strcmp(argv[0], "-l")) {
+        list(todofp);
+    } else if (!strcmp(argv[0], "pipe") || !strcmp(argv[0], "-p")) {
         struct task *todolist;
         int n = load(todofp, &todolist);
 
         for (int i = 0; i < n; ++i) {
-            auto color = ANSI_COLOR_WHITE;
-            auto colorcode = todolist[i].metadata;
-
-            color = colorcode & TASK_IMPORTANT ? ANSI_COLOR_GREEN : color;
-            color = colorcode & TASK_URGENT ? ANSI_COLOR_RED : color;
-            color = (colorcode & TASK_IMPORTANT) && (colorcode & TASK_URGENT) ? ANSI_COLOR_RED_BG : color;
-            printf("%s%d: %s" ANSI_COLOR_RESET "\n", color, i + 1, todolist[i].strtask);
+            printf("%s\n", todolist[i].strtask);
         }
-    }
-    if (!strcmp(argv[1], "add") || !strcmp(argv[1], "a")) {
-        // input : strtask
-        char task[256];
-        int index = 0, len;
-        for (int i = 2; i < argc; ++i) {
-            len = strlen(argv[i]);
-            strncpy(task + index, argv[i], len);
-            index += len;
-            task[index++] = ' ';
-        }
+    } else if (!strcmp(argv[0], "add") || !strcmp(argv[0], "-a")) {
+        --argc;
+        argv++;
 
-        // input : metadata
-        unsigned char metadata = 0;
-        char c;
+        add(todofp, argv, argc);
+    } else if (!strcmp(argv[0], "remove") || !strcmp(argv[0], "-r")) {
+        --argc;
+        argv++;
 
-        printf("Important[y]? ");
-        if (scanf("%c", &c) != 1)
-            printf("Input 'y' for yes and any other character for no");
-        while (fgetc(stdin) != '\n')
-            ;
-        metadata |= (c == 'y' ? TASK_IMPORTANT : metadata);
+        task_remove(todofp, atoi(argv[0]));
+    } else if (!strcmp(argv[0], "done") || !strcmp(argv[0], "-d")) {
+        --argc;
+        argv++;
 
-        printf("Urgent[y]? ");
-        if (scanf("%c", &c) != 1)
-            printf("Input 'y' for yes and any other character for no");
-        while (fgetc(stdin) != '\n')
-            ;
-        metadata |= (c == 'y' ? TASK_URGENT : metadata);
-
-        task_add(todofp, task, index, metadata);
-        return 0;
-    }
-    if (!strcmp(argv[1], "done") || !strcmp(argv[1], "d")) {
-        task_remove(todofp, atoi(argv[2]));
-    }
-    if (!strcmp(argv[1], "clear") || !strcmp(argv[1], "c")) {
+        done(todofp, argc, argv);
+    } else if (!strcmp(argv[0], "clear") || !strcmp(argv[0], "-c")) {
         FILE *f = fopen(todofp, "w");
         fclose(f);
+    } else {
+        puts("Enter 'todo' to get help");
     }
 }
